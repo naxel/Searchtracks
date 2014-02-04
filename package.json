@@ -1,0 +1,23 @@
+{
+  "name": "searchtracks",
+  "version": "0.0.1",
+  "description": "Search Tracks",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naxel/Searchtracks.git"
+  },
+  "keywords": [
+    "search",
+    "tracks"
+  ],
+  "author": "Alex Khaylo <naxel@land.ru>",
+  "dependencies": {
+    "request": "latest"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/naxel/Searchtracks/issues"
+  },
+  "homepage": "https://github.com/naxel/Searchtracks"
+}

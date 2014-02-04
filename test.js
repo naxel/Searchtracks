@@ -1,13 +1,10 @@
-Searchtracks
-============
-
-Search Tracks
-
-Example:
-
-```js
-var Prostopleer = require('searchtracks/prostopleer');
-var SearchTracks = require('searchtracks');
+/**
+ *
+ * User: Alexander Khaylo aka naxel
+ * Date: 04.02.14 22:48
+ */
+var Prostopleer = require('./prostopleer');
+var SearchTracks = require('./index');
 
 var searchTracks = new SearchTracks(new Prostopleer());
 
@@ -19,4 +16,3 @@ var params = {
 searchTracks.search(params, function(result) {
     console.log(result);
 });
-```
