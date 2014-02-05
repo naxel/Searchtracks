@@ -1,6 +1,6 @@
 {
   "name": "searchtracks",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Search Tracks",
   "main": "index.js",
   "repository": {
