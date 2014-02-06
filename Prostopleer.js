@@ -5,17 +5,11 @@
  */
 
 var request = require('request');
-function Strategy() {
-    this.search = function() {};
-}
 
 var accessToken = null;
 var tokenExpireTime = null;
 
 function Prostopleer() {}
-
-Prostopleer.prototype = new Strategy();
-Prostopleer.prototype.constructor = Prostopleer;
 
 Prostopleer.prototype.isValidToken = function(callback) {
     if (!tokenExpireTime || tokenExpireTime < (new Date()).getTime()) {
@@ -37,7 +31,7 @@ Prostopleer.prototype.tokenRequest = function(callback) {
             'Accept': '*/*',
             'Cache-Control': 'no-cache',
             'Authorization': 'Basic Og==',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=windows-1251'
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         }
     };
     request(options, function(error, response, body) {
@@ -66,7 +60,7 @@ Prostopleer.prototype.search = function(params, callback) {
                     headers: {
                         'Accept': '*/*',
                         'Cache-Control': 'no-cache',
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=windows-1251'
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
                     }
                 };
                 options.uri = 'http://api.pleer.com/index.php';
@@ -75,10 +69,10 @@ Prostopleer.prototype.search = function(params, callback) {
                 var limit = params.limit || 20;
                 if (query && query.length > 1) {
 
-                    options.body = 'access_token=' + accessToken +
+                    options.body = 'access_token=' + encodeURIComponent(accessToken) +
                         '&method=tracks_search' +
-                        '&result_on_page=' + limit +
-                        '&query=' + query;
+                        '&result_on_page=' + encodeURIComponent(limit) +
+                        '&query=' + encodeURIComponent(query);
                 } else {
                     /**
                      list_type (int, обязательный) тип списка, 1- неделя, 2 - месяц, 3 - 3 месяца, 4 - полгода, 5 - год
@@ -93,11 +87,11 @@ Prostopleer.prototype.search = function(params, callback) {
                      */
                     var page = params.page || 1;
                     var method = 'get_top_list';
-                    options.body = 'access_token=' + accessToken +
+                    options.body = 'access_token=' + encodeURIComponent(accessToken) +
                         '&method=get_top_list' +
-                        '&list_type=' + listType +
-                        '&language=' + language +
-                        '&page=' + page;
+                        '&list_type=' + encodeURIComponent(listType) +
+                        '&language=' + encodeURIComponent(language) +
+                        '&page=' + encodeURIComponent(page);
                 }
 
                 request(options, function(error, response, body) {
@@ -129,14 +123,14 @@ Prostopleer.prototype.getTrackUrl = function(params, callback) {
         headers: {
             'Accept': '*/*',
             'Cache-Control': 'no-cache',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=windows-1251'
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         }
     };
     options.uri = 'http://api.pleer.com/index.php';
-    options.body = 'access_token=' + accessToken +
+    options.body = 'access_token=' + encodeURIComponent(accessToken) +
         '&method=tracks_get_download_link' +
-        '&reason=' + reason +
-        '&track_id=' + trackId;
+        '&reason=' + encodeURIComponent(reason) +
+        '&track_id=' + encodeURIComponent(trackId);
 
     request(options, function(error, response, body) {
 
