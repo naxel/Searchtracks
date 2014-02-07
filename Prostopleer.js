@@ -36,13 +36,21 @@ Prostopleer.prototype.tokenRequest = function(callback) {
     };
     request(options, function(error, response, body) {
 
-        if (!error && response.statusCode === 200) {
+        if (!error) {
+            if (response.statusCode === 200) {
 
-            accessToken = JSON.parse(body).access_token;
-            tokenExpireTime = (new Date()).getTime() + 3600000;
+                var result = JSON.parse(body);
+                if (result) {
+                    accessToken = result.access_token;
+                    tokenExpireTime = (new Date()).getTime() + 3600000;
+                    callback(null);
+                } else {
+                    callback('Token parsing error.');
+                }
 
-            callback(null);
-
+            } else {
+                callback('Error in token request. Server returned status: ' + response.statusCode);
+            }
         } else {
             callback(error);
         }
@@ -96,10 +104,14 @@ Prostopleer.prototype.search = function(params, callback) {
 
                 request(options, function(error, response, body) {
 
-                    if (!error && response.statusCode === 200) {
+                    if (!error) {
+                        if (response.statusCode === 200) {
 
-                        callback(null, body);
+                            callback(null, body);
 
+                        } else {
+                            callback('Error in search tracks request. Server returned status: ' + response.statusCode);
+                        }
                     } else {
                         callback(error);
                     }

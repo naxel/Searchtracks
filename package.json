@@ -1,6 +1,6 @@
 {
   "name": "searchtracks",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Search Tracks",
   "main": "index.js",
   "repository": {
@@ -9,9 +9,15 @@
   },
   "keywords": [
     "search",
-    "tracks"
+    "tracks",
+    "music",
+    "prostopleer",
+    "pleer"
   ],
-  "author": "Alex Khaylo <naxel@land.ru>",
+  "author": {
+    "name": "Alex Khaylo",
+    "email": "naxel@land.ru"
+  },
   "dependencies": {
     "request": "latest"
   },

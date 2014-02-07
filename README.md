@@ -18,30 +18,35 @@ var params = {
 searchTracks.search(params, function(error, response) {
 
     if (!error) {
-        var result = JSON.parse(response);
+        if (response) {
 
-        if (result.success) {
+            var result = JSON.parse(response);
 
-            console.log('Found tracks: ' + result.count);
+            if (result && result.success) {
 
-            for (var track in result.tracks) {
-                console.log('First track: ' + result.tracks[track].artist + ' - ' + result.tracks[track].track);
+                console.log('Found tracks: ' + result.count);
 
-                var params = {
-                    track_id: result.tracks[track].id
-                };
-                searchTracks.getTrackUrl(params, function(error, url) {
+                for (var track in result.tracks) {
+                    console.log('First track: ' + result.tracks[track].artist + ' - ' + result.tracks[track].track);
 
-                    if (!error && url) {
-                        console.log('URL: ' + url);
-                    } else {
-                        console.error(error);
-                    }
-                });
-                break;
+                    var params = {
+                        track_id: result.tracks[track].id
+                    };
+                    searchTracks.getTrackUrl(params, function(error, url) {
+
+                        if (!error && url) {
+                            console.log('URL: ' + url);
+                        } else {
+                            console.error(error);
+                        }
+                    });
+                    break;
+                }
+            } else {
+                console.error(result);
             }
         } else {
-            console.error(result);
+            console.error('Empty response.');
         }
     } else {
         console.error(error);
