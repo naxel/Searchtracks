@@ -1,2 +1,6 @@
 .git
 .idea
+node_modules
+example.js
+test
+Gruntfile.js
