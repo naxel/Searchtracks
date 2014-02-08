@@ -28,7 +28,7 @@
     "grunt-cli": "~0.1.13"
   },
   "scripts": {
-    "test": "grunt"
+    "test": "node_modules\\.bin\\grunt"
   },
   "license": "MIT",
   "bugs": {
