@@ -3,6 +3,8 @@ Searchtracks
 
 Search Tracks
 
+[![Build Status](https://travis-ci.org/naxel/Searchtracks.png?branch=master)](https://travis-ci.org/naxel/Searchtracks)
+
 Example:
 
 ```js
