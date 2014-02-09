@@ -21,6 +21,9 @@ describe('#searchTracks (Prostopleer)', function() {
             should.not.exist(error);
             response.should.match(/^\{"success":true,"count":"\d*","tracks":\{/);
             var result = JSON.parse(response);
+            result.should.have.property('success');
+            result.should.have.property('count');
+            result.should.have.property('tracks');
             result.success.should.be.eql(true);
             result.count.should.be.above(0);
 
