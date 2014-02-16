@@ -137,4 +137,12 @@ Vkontakte.prototype.search = function(params, callback) {
         });
 };
 
+Vkontakte.prototype.getTrackUrl = function(params, callback) {
+    if (!params.url) {
+        callback('Required param is empty');
+        return;
+    }
+    callback(null, params.url);
+};
+
 module.exports = Vkontakte;
