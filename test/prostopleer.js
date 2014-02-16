@@ -26,7 +26,7 @@ describe('#searchTracks (Prostopleer)', function() {
             response.success.should.be.eql(true);
             response.count.should.be.above(0);
 
-            for (var track in result.tracks) {
+            for (var track in response.tracks) {
                 response.tracks[track].should.have.property('id');
                 response.tracks[track].should.have.property('artist');
                 response.tracks[track].should.have.property('track');
