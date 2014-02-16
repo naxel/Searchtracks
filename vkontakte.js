@@ -91,7 +91,7 @@ Vkontakte.prototype.search = function(params, callback) {
 
                     if (!error) {
                         if (response.statusCode === 200) {
-
+                            console.log(body);
                             var result = JSON.parse(body);
                             var count = result.response[0];
                             var tracks = [];
