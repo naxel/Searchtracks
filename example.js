@@ -49,3 +49,42 @@ searchTracks.search(params, function(error, response) {
         console.error(error);
     }
 });
+
+
+var Vkontakte = require('./vkontakte');
+
+var config = {
+    id: null,
+    secret: ''
+};
+
+searchTracks = new SearchTracks(new Vkontakte(config));
+
+params = {
+    query: 'slot',
+    limit: 20
+};
+searchTracks.search(params, function(error, result) {
+
+    if (!error) {
+        if (result) {
+
+            if (result && result.success) {
+
+                console.log('Found tracks: ' + result.count);
+
+                for (var track in result.tracks) {
+                    console.log('First track: ' + result.tracks[track].artist + ' - ' + result.tracks[track].track);
+                    console.log('URL: ' + result.tracks[track].url);
+                    break;
+                }
+            } else {
+                console.error(result);
+            }
+        } else {
+            console.error('Empty response.');
+        }
+    } else {
+        console.error(error);
+    }
+});

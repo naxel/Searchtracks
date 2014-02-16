@@ -1,0 +1,140 @@
+/**
+ *
+ * User: Alexander Khaylo aka naxel
+ * Date: 16.02.14 21:27
+ */
+
+var request = require('request');
+
+var accessToken = null;
+var id = null;
+var secret = null;
+
+function Vkontakte(params) {
+    id = params.id;
+    secret = params.secret;
+}
+
+Vkontakte.prototype.isValidToken = function(callback) {
+    if (!accessToken) {
+        this.tokenRequest(callback);
+    } else {
+        callback(null);
+    }
+};
+
+Vkontakte.prototype.tokenRequest = function(callback) {
+    var options = {
+        method: 'POST',
+        body: 'grant_type=client_credentials',
+        uri: 'https://oauth.vk.com/',
+        headers: {
+            'Accept': '*/*',
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        }
+    };
+
+    options.uri = 'https://oauth.vk.com/access_token?client_id=' + id + '&client_secret='
+        + secret + '&grant_type=client_credentials';
+
+    request(options, function(error, response, body) {
+
+        if (!error) {
+            if (response.statusCode === 200) {
+
+                var result = JSON.parse(body);
+                if (result) {
+                    accessToken = result.access_token;
+                    callback(null);
+                } else {
+                    callback('Token parsing error.');
+                }
+
+            } else {
+                callback('Error in token request. Server returned status: ' + response.statusCode);
+            }
+        } else {
+            callback(error);
+        }
+    });
+};
+
+
+Vkontakte.prototype.search = function(params, callback) {
+
+    this.isValidToken(
+        function(error) {
+            if (!error) {
+                var options = {
+                    method: 'POST',
+                    headers: {
+                        'Accept': '*/*',
+                        'Cache-Control': 'no-cache',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                    }
+                };
+
+                var query = params.query || '';
+                var limit = params.limit || 20;
+                var offset = params.offset || 0;
+                var token = '539d9cd7708b970f0484946d8b81ebfdd06b77ddd57a79e2b2191dd73d99e94b697bf8c93431fc6ad2411';
+                options.uri = 'https://api.vk.com/method/audio.search?' +
+                    'access_token=' + encodeURIComponent(token) +
+                    '&auto_complete' +
+                    '&offset=' + offset+
+                    '&sort=2' +
+                    '&count=' + limit +
+                    '&q=' + encodeURIComponent(query);
+
+                request(options, function(error, response, body) {
+
+                    if (!error) {
+                        if (response.statusCode === 200) {
+
+                            var result = JSON.parse(body);
+                            var count = result.response[0];
+                            var tracks = [];
+                            var track = {};
+                            result.response.shift();
+                            var length = result.response.length;
+                            for (var i = 0; i < length; i++) {
+                                track = {
+                                    'id': result.response[i].aid,
+                                    'artist': result.response[i].artist,
+                                    'track': result.response[i].title,
+                                    'lenght': result.response[i].duration,
+                                    'url': result.response[i].url,
+                                    'owner_id': result.response[i].owner_id,
+                                    'genre': result.response[i].genre
+                                };
+
+                                if (result.response[i].lyrics_id) {
+                                    track.lyrics_id = result.response[i].lyrics_id;
+                                }
+                                tracks.push(track);
+                            }
+
+                            callback(
+                                null,
+                                {
+                                    "success": true,
+                                    "count": count,
+                                    "tracks": tracks
+                                }
+                            );
+
+                        } else {
+                            callback('Error in search tracks request. Server returned status: ' + response.statusCode);
+                        }
+                    } else {
+                        callback(error);
+                    }
+                });
+            } else {
+                callback(error);
+            }
+        });
+};
+
+module.exports = Vkontakte;

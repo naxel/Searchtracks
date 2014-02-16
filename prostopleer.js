@@ -75,11 +75,15 @@ Prostopleer.prototype.search = function(params, callback) {
 
                 var query = params.query || '';
                 var limit = params.limit || 20;
+                var quality = params.quality || 'all';//all, bad, good, best
+                var page = params.page || 1;
                 if (query && query.length > 1) {
 
                     options.body = 'access_token=' + encodeURIComponent(accessToken) +
                         '&method=tracks_search' +
                         '&result_on_page=' + encodeURIComponent(limit) +
+                        '&quality=' + encodeURIComponent(quality) +
+                        '&page=' + encodeURIComponent(page) +
                         '&query=' + encodeURIComponent(query);
                 } else {
                     /**
@@ -90,10 +94,6 @@ Prostopleer.prototype.search = function(params, callback) {
                      * language (string) — тип топа en - иностранный, ru - русский.
                      */
                     var language = params.language || 'en';
-                    /**
-                     * page (int) — текущая страница.
-                     */
-                    var page = params.page || 1;
                     var method = 'get_top_list';
                     options.body = 'access_token=' + encodeURIComponent(accessToken) +
                         '&method=get_top_list' +
@@ -107,7 +107,7 @@ Prostopleer.prototype.search = function(params, callback) {
                     if (!error) {
                         if (response.statusCode === 200) {
 
-                            callback(null, body);
+                            callback(null, JSON.parse(body));
 
                         } else {
                             callback('Error in search tracks request. Server returned status: ' + response.statusCode);

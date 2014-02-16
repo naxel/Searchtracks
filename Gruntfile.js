@@ -10,9 +10,9 @@ module.exports = function(grunt) {
                 test: {
                     options: {
                         reporter: 'spec',
-                        timeout: 10000
+                        timeout: 30000
                     },
-                    src: ['test/**/*.js']
+                    src: ['test/vkontakte.js', 'test/**/*.js']
                 }
             }
         }

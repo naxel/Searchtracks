@@ -13,25 +13,24 @@ var searchTracks = new SearchTracks(new Prostopleer());
 describe('#searchTracks (Prostopleer)', function() {
     var params = {
         query: 'slot',
+        quality: 'best',
         limit: 1
     };
     it('searchTracks.search()', function(done) {
         searchTracks.search(params, function(error, response) {
 
             should.not.exist(error);
-            response.should.match(/^\{"success":true,"count":"\d*","tracks":\{/);
-            var result = JSON.parse(response);
-            result.should.have.property('success');
-            result.should.have.property('count');
-            result.should.have.property('tracks');
-            result.success.should.be.eql(true);
-            result.count.should.be.above(0);
+            response.should.have.property('success');
+            response.should.have.property('count');
+            response.should.have.property('tracks');
+            response.success.should.be.eql(true);
+            response.count.should.be.above(0);
 
             for (var track in result.tracks) {
-                result.tracks[track].should.have.property('id');
-                result.tracks[track].should.have.property('artist');
-                result.tracks[track].should.have.property('track');
-                result.tracks[track].should.have.property('lenght');
+                response.tracks[track].should.have.property('id');
+                response.tracks[track].should.have.property('artist');
+                response.tracks[track].should.have.property('track');
+                response.tracks[track].should.have.property('lenght');
                 done();
                 break;
             }
@@ -42,12 +41,17 @@ describe('#searchTracks (Prostopleer)', function() {
 
         searchTracks.search(params, function(error, response) {
 
-            var result = JSON.parse(response);
+            should.not.exist(error);
+            response.should.have.property('success');
+            response.should.have.property('count');
+            response.should.have.property('tracks');
+            response.success.should.be.eql(true);
+            response.count.should.be.above(0);
 
-            for (var track in result.tracks) {
+            for (var track in response.tracks) {
 
                 var params = {
-                    track_id: result.tracks[track].id
+                    track_id: response.tracks[track].id
                 };
                 searchTracks.getTrackUrl(params, function(error, url) {
 
