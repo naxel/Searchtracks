@@ -106,8 +106,32 @@ Prostopleer.prototype.search = function(params, callback) {
 
                     if (!error) {
                         if (response.statusCode === 200) {
+                            var result = JSON.parse(body);
 
-                            callback(null, JSON.parse(body));
+                            var tracks = [];
+                            var track = {};
+                            var length = result.tracks.length;
+                            for (var i = 0; i < length; i++) {
+                                track = {
+                                    'id': result.tracks[i].id,
+                                    'artist': result.tracks[i].artist,
+                                    'track': result.tracks[i].track,
+                                    'length': result.tracks[i].lenght,
+                                    'text_id': result.tracks[i].text_id,
+                                    'bitrate': result.tracks[i].bitrate,
+                                    'source': 'prostopleer'
+                                };
+
+                                tracks.push(track);
+                            }
+                            callback(
+                                null,
+                                {
+                                    "success": true,
+                                    "count": result.count,
+                                    "tracks": tracks
+                                }
+                            );
 
                         } else {
                             callback('Error in search tracks request. Server returned status: ' + response.statusCode);

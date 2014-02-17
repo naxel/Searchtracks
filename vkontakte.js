@@ -102,10 +102,11 @@ Vkontakte.prototype.search = function(params, callback) {
                                     'id': result.response[i].aid,
                                     'artist': result.response[i].artist,
                                     'track': result.response[i].title,
-                                    'lenght': result.response[i].duration,
+                                    'length': result.response[i].duration,
                                     'url': result.response[i].url,
                                     'owner_id': result.response[i].owner_id,
-                                    'genre': result.response[i].genre
+                                    'genre': result.response[i].genre,
+                                    'source': 'vkontakte'
                                 };
 
                                 if (result.response[i].lyrics_id) {

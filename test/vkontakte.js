@@ -33,7 +33,7 @@ describe('#searchTracks (Vkontakte)', function() {
                 response.tracks[track].should.have.property('id');
                 response.tracks[track].should.have.property('artist');
                 response.tracks[track].should.have.property('track');
-                response.tracks[track].should.have.property('lenght');
+                response.tracks[track].should.have.property('length');
                 done();
                 break;
             }
