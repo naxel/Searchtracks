@@ -17,17 +17,15 @@ searchTracks.search(params, function(error, response) {
     if (!error) {
         if (response) {
 
-            var result = JSON.parse(response);
+            if (response.success) {
 
-            if (result && result.success) {
+                console.log('Found tracks: ' + response.count);
 
-                console.log('Found tracks: ' + result.count);
-
-                for (var track in result.tracks) {
-                    console.log('First track: ' + result.tracks[track].artist + ' - ' + result.tracks[track].track);
+                for (var track in response.tracks) {
+                    console.log('First track: ' + response.tracks[track].artist + ' - ' + response.tracks[track].track);
 
                     var params = {
-                        track_id: result.tracks[track].id
+                        track_id: response.tracks[track].id
                     };
                     searchTracks.getTrackUrl(params, function(error, url) {
 
@@ -40,7 +38,7 @@ searchTracks.search(params, function(error, response) {
                     break;
                 }
             } else {
-                console.error(result);
+                console.error(response);
             }
         } else {
             console.error('Empty response.');

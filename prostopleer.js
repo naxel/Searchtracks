@@ -110,8 +110,8 @@ Prostopleer.prototype.search = function(params, callback) {
 
                             var tracks = [];
                             var track = {};
-                            var length = result.tracks.length;
-                            for (var i = 0; i < length; i++) {
+
+                            for (var i in result.tracks) {
                                 track = {
                                     'id': result.tracks[i].id,
                                     'artist': result.tracks[i].artist,
