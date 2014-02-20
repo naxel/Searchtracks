@@ -76,8 +76,8 @@ Vkontakte.prototype.search = function(params, callback) {
                 };
 
                 var query = params.query || '';
-                var limit = params.limit || 20;
-                var offset = params.offset || 0;
+                var limit = parseInt(params.limit, 10) || 20;
+                var offset = parseInt(params.offset, 10) || 0;
                 var token = '539d9cd7708b970f0484946d8b81ebfdd06b77ddd57a79e2b2191dd73d99e94b697bf8c93431fc6ad2411';
                 options.uri = 'https://api.vk.com/method/audio.search?' +
                     'access_token=' + encodeURIComponent(token) +

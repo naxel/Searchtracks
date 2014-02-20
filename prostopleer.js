@@ -74,22 +74,23 @@ Prostopleer.prototype.search = function(params, callback) {
                 options.uri = 'http://api.pleer.com/index.php';
 
                 var query = params.query || '';
-                var limit = params.limit || 20;
+                var limit = parseInt(params.limit, 10) || 20;
                 var quality = params.quality || 'all';//all, bad, good, best
-                var page = params.page || 1;
+                var page = parseInt(params.page, 10) || 1;
                 if (query && query.length > 1) {
 
                     options.body = 'access_token=' + encodeURIComponent(accessToken) +
                         '&method=tracks_search' +
-                        '&result_on_page=' + encodeURIComponent(limit) +
+                        '&result_on_page=' + limit +
                         '&quality=' + encodeURIComponent(quality) +
-                        '&page=' + encodeURIComponent(page) +
+                        '&page=' + page +
                         '&query=' + encodeURIComponent(query);
+                    console.log(options.body);
                 } else {
                     /**
                      list_type (int, обязательный) тип списка, 1- неделя, 2 - месяц, 3 - 3 месяца, 4 - полгода, 5 - год
                      */
-                    var listType = params.list_type || 1;
+                    var listType = parseInt(params.list_type, 10) || 1;
                     /**
                      * language (string) — тип топа en - иностранный, ru - русский.
                      */
@@ -97,9 +98,9 @@ Prostopleer.prototype.search = function(params, callback) {
                     var method = 'get_top_list';
                     options.body = 'access_token=' + encodeURIComponent(accessToken) +
                         '&method=get_top_list' +
-                        '&list_type=' + encodeURIComponent(listType) +
+                        '&list_type=' + listType +
                         '&language=' + encodeURIComponent(language) +
-                        '&page=' + encodeURIComponent(page);
+                        '&page=' + page;
                 }
 
                 request(options, function(error, response, body) {
@@ -109,7 +110,7 @@ Prostopleer.prototype.search = function(params, callback) {
                             var result = JSON.parse(body);
 
                             var tracks = [];
-                            var track = {};
+                            var track;
 
                             for (var i in result.tracks) {
                                 track = {
