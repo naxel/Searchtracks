@@ -85,7 +85,6 @@ Prostopleer.prototype.search = function(params, callback) {
                         '&quality=' + encodeURIComponent(quality) +
                         '&page=' + page +
                         '&query=' + encodeURIComponent(query);
-                    console.log(options.body);
                 } else {
                     /**
                      list_type (int, обязательный) тип списка, 1- неделя, 2 - месяц, 3 - 3 месяца, 4 - полгода, 5 - год
