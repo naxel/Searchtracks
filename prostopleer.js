@@ -9,9 +9,9 @@ var request = require('request');
 var accessToken = null;
 var tokenExpireTime = null;
 
-function Prostopleer() {}
+function Prostopleer () {}
 
-Prostopleer.prototype.isValidToken = function(callback) {
+Prostopleer.prototype.isValidToken = function (callback) {
     if (!tokenExpireTime || tokenExpireTime < (new Date()).getTime()) {
         this.tokenRequest(callback);
     } else {
@@ -19,7 +19,7 @@ Prostopleer.prototype.isValidToken = function(callback) {
     }
 };
 
-Prostopleer.prototype.tokenRequest = function(callback) {
+Prostopleer.prototype.tokenRequest = function (callback) {
     // auth is: 'Basic VGVzdDoxMjM='
     //'Basic ' + new Buffer(username + ':' + password).toString('base64');
 
@@ -34,7 +34,7 @@ Prostopleer.prototype.tokenRequest = function(callback) {
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         }
     };
-    request(options, function(error, response, body) {
+    request(options, function (error, response, body) {
 
         if (!error) {
             if (response.statusCode === 200) {
@@ -58,10 +58,10 @@ Prostopleer.prototype.tokenRequest = function(callback) {
 };
 
 
-Prostopleer.prototype.search = function(params, callback) {
+Prostopleer.prototype.search = function (params, callback) {
 
     this.isValidToken(
-        function(error) {
+        function (error) {
             if (!error) {
                 var options = {
                     method: 'POST',
@@ -77,7 +77,7 @@ Prostopleer.prototype.search = function(params, callback) {
                 var limit = parseInt(params.limit, 10) || 20;
                 var quality = params.quality || 'all';//all, bad, good, best
                 var page = parseInt(params.page, 10) || 1;
-                if (query && query.length > 1) {
+                if (query && query.length > 0) {
 
                     options.body = 'access_token=' + encodeURIComponent(accessToken) +
                         '&method=tracks_search' +
@@ -85,6 +85,45 @@ Prostopleer.prototype.search = function(params, callback) {
                         '&quality=' + encodeURIComponent(quality) +
                         '&page=' + page +
                         '&query=' + encodeURIComponent(query);
+
+                    request(options, function (error, response, body) {
+
+                        if (!error) {
+                            if (response.statusCode === 200) {
+                                var result = JSON.parse(body);
+
+                                var tracks = [];
+                                var track;
+
+                                for (var i in result.tracks) {
+                                    track = {
+                                        'id': result.tracks[i].id,
+                                        'artist': result.tracks[i].artist,
+                                        'track': result.tracks[i].track,
+                                        'length': result.tracks[i].lenght,
+                                        'text_id': result.tracks[i].text_id,
+                                        'bitrate': result.tracks[i].bitrate,
+                                        'source': 'prostopleer'
+                                    };
+
+                                    tracks.push(track);
+                                }
+                                callback(
+                                    null,
+                                    {
+                                        "success": true,
+                                        "count": result.count,
+                                        "tracks": tracks
+                                    }
+                                );
+
+                            } else {
+                                callback('Error in search tracks request. Server returned status: ' + response.statusCode);
+                            }
+                        } else {
+                            callback(error);
+                        }
+                    });
                 } else {
                     /**
                      list_type (int, обязательный) тип списка, 1- неделя, 2 - месяц, 3 - 3 месяца, 4 - полгода, 5 - год
@@ -100,46 +139,47 @@ Prostopleer.prototype.search = function(params, callback) {
                         '&list_type=' + listType +
                         '&language=' + encodeURIComponent(language) +
                         '&page=' + page;
+
+                    request(options, function (error, response, body) {
+
+                        if (!error) {
+                            if (response.statusCode === 200) {
+                                var result = JSON.parse(body);
+
+                                var tracks = [];
+                                var track;
+                                for (var i in result.tracks.data) {
+                                    track = {
+                                        'id': result.tracks.data[i].id,
+                                        'artist': result.tracks.data[i].artist,
+                                        'track': result.tracks.data[i].track,
+                                        'length': result.tracks.data[i].lenght,
+                                        'text_id': result.tracks.data[i].text_id,
+                                        'bitrate': result.tracks.data[i].bitrate,
+                                        'source': 'prostopleer'
+                                    };
+
+                                    tracks.push(track);
+                                }
+                                callback(
+                                    null,
+                                    {
+                                        "success": true,
+                                        "count": result.tracks.count,
+                                        "tracks": tracks
+                                    }
+                                );
+
+                            } else {
+                                callback('Error in search tracks request. Server returned status: ' + response.statusCode);
+                            }
+                        } else {
+                            callback(error);
+                        }
+                    });
                 }
 
-                request(options, function(error, response, body) {
 
-                    if (!error) {
-                        if (response.statusCode === 200) {
-                            var result = JSON.parse(body);
-
-                            var tracks = [];
-                            var track;
-
-                            for (var i in result.tracks) {
-                                track = {
-                                    'id': result.tracks[i].id,
-                                    'artist': result.tracks[i].artist,
-                                    'track': result.tracks[i].track,
-                                    'length': result.tracks[i].lenght,
-                                    'text_id': result.tracks[i].text_id,
-                                    'bitrate': result.tracks[i].bitrate,
-                                    'source': 'prostopleer'
-                                };
-
-                                tracks.push(track);
-                            }
-                            callback(
-                                null,
-                                {
-                                    "success": true,
-                                    "count": result.count,
-                                    "tracks": tracks
-                                }
-                            );
-
-                        } else {
-                            callback('Error in search tracks request. Server returned status: ' + response.statusCode);
-                        }
-                    } else {
-                        callback(error);
-                    }
-                });
             } else {
                 callback(error);
             }
@@ -147,7 +187,7 @@ Prostopleer.prototype.search = function(params, callback) {
 };
 
 
-Prostopleer.prototype.getTrackUrl = function(params, callback) {
+Prostopleer.prototype.getTrackUrl = function (params, callback) {
     if (!params.track_id) {
         callback('Required param is empty');
         return;
@@ -168,7 +208,7 @@ Prostopleer.prototype.getTrackUrl = function(params, callback) {
         '&reason=' + encodeURIComponent(reason) +
         '&track_id=' + encodeURIComponent(trackId);
 
-    request(options, function(error, response, body) {
+    request(options, function (error, response, body) {
 
         if (!error && response.statusCode === 200) {
 
