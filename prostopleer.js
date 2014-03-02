@@ -188,45 +188,52 @@ Prostopleer.prototype.search = function (params, callback) {
 
 
 Prostopleer.prototype.getTrackUrl = function (params, callback) {
-    if (!params.track_id) {
-        callback('Required param is empty');
-        return;
-    }
-    var trackId = params.track_id;
-    var reason = params.reason || 'listen';
-    var options = {
-        method: 'POST',
-        headers: {
-            'Accept': '*/*',
-            'Cache-Control': 'no-cache',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-        }
-    };
-    options.uri = 'http://api.pleer.com/index.php';
-    options.body = 'access_token=' + encodeURIComponent(accessToken) +
-        '&method=tracks_get_download_link' +
-        '&reason=' + encodeURIComponent(reason) +
-        '&track_id=' + encodeURIComponent(trackId);
-
-    request(options, function (error, response, body) {
-
-        if (!error && response.statusCode === 200) {
-
-            var result = JSON.parse(body);
-            if (result) {
-                if (result.success === true && result.url) {
-                    callback(null, result.url);
-                } else {
-                    callback('Response error.');
+    this.isValidToken(
+        function (error) {
+            if (!error) {
+                if (!params.track_id) {
+                    callback('Required param is empty');
+                    return;
                 }
-            } else {
-                callback('Response parsing error.');
-            }
+                var trackId = params.track_id;
+                var reason = params.reason || 'listen';
+                var options = {
+                    method: 'POST',
+                    headers: {
+                        'Accept': '*/*',
+                        'Cache-Control': 'no-cache',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                    }
+                };
+                options.uri = 'http://api.pleer.com/index.php';
+                options.body = 'access_token=' + encodeURIComponent(accessToken) +
+                    '&method=tracks_get_download_link' +
+                    '&reason=' + encodeURIComponent(reason) +
+                    '&track_id=' + encodeURIComponent(trackId);
 
-        } else {
-            callback(error);
-        }
-    });
+                request(options, function (error, response, body) {
+
+                    if (!error && response.statusCode === 200) {
+
+                        var result = JSON.parse(body);
+                        if (result) {
+                            if (result.success === true && result.url) {
+                                callback(null, result.url);
+                            } else {
+                                callback('Response error.');
+                            }
+                        } else {
+                            callback('Response parsing error.');
+                        }
+
+                    } else {
+                        callback(error);
+                    }
+                });
+            } else {
+                callback(error);
+            }
+        });
 };
 
 module.exports = Prostopleer;
