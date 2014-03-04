@@ -10,12 +10,12 @@ var accessToken = null;
 var id = null;
 var secret = null;
 
-function Vkontakte(params) {
+function Vkontakte (params) {
     id = params.id;
     secret = params.secret;
 }
 
-Vkontakte.prototype.isValidToken = function(callback) {
+Vkontakte.prototype.isValidToken = function (callback) {
     if (!accessToken) {
         this.tokenRequest(callback);
     } else {
@@ -23,7 +23,7 @@ Vkontakte.prototype.isValidToken = function(callback) {
     }
 };
 
-Vkontakte.prototype.tokenRequest = function(callback) {
+Vkontakte.prototype.tokenRequest = function (callback) {
     var options = {
         method: 'POST',
         body: 'grant_type=client_credentials',
@@ -38,7 +38,7 @@ Vkontakte.prototype.tokenRequest = function(callback) {
     options.uri = 'https://oauth.vk.com/access_token?client_id=' + id + '&client_secret='
         + secret + '&grant_type=client_credentials';
 
-    request(options, function(error, response, body) {
+    request(options, function (error, response, body) {
 
         if (!error) {
             if (response.statusCode === 200) {
@@ -61,10 +61,10 @@ Vkontakte.prototype.tokenRequest = function(callback) {
 };
 
 
-Vkontakte.prototype.search = function(params, callback) {
+Vkontakte.prototype.search = function (params, callback) {
 
     this.isValidToken(
-        function(error) {
+        function (error) {
             if (!error) {
                 var options = {
                     method: 'POST',
@@ -82,48 +82,56 @@ Vkontakte.prototype.search = function(params, callback) {
                 options.uri = 'https://api.vk.com/method/audio.search?' +
                     'access_token=' + encodeURIComponent(token) +
                     '&auto_complete' +
-                    '&offset=' + offset+
+                    '&offset=' + offset +
                     '&sort=2' +
                     '&count=' + limit +
                     '&q=' + encodeURIComponent(query);
 
-                request(options, function(error, response, body) {
+                request(options, function (error, response, body) {
 
                     if (!error) {
                         if (response.statusCode === 200) {
                             var result = JSON.parse(body);
-                            var count = result.response[0];
-                            var tracks = [];
-                            var track = {};
-                            result.response.shift();
-                            var length = result.response.length;
-                            for (var i = 0; i < length; i++) {
-                                track = {
-                                    'id': result.response[i].aid,
-                                    'artist': result.response[i].artist,
-                                    'track': result.response[i].title,
-                                    'length': result.response[i].duration,
-                                    'url': result.response[i].url,
-                                    'owner_id': result.response[i].owner_id,
-                                    'genre': result.response[i].genre,
-                                    'source': 'vkontakte'
-                                };
+                            if (result) {
+                                if (result.response && result.response[0]) {
+                                    var count = result.response[0];
+                                    var tracks = [];
+                                    var track = {};
+                                    result.response.shift();
+                                    var length = result.response.length;
+                                    for (var i = 0; i < length; i++) {
+                                        track = {
+                                            'id': result.response[i].aid,
+                                            'artist': result.response[i].artist,
+                                            'track': result.response[i].title,
+                                            'length': result.response[i].duration,
+                                            'url': result.response[i].url,
+                                            'owner_id': result.response[i].owner_id,
+                                            'genre': result.response[i].genre,
+                                            'source': 'vkontakte'
+                                        };
 
-                                if (result.response[i].lyrics_id) {
-                                    track.lyrics_id = result.response[i].lyrics_id;
+                                        if (result.response[i].lyrics_id) {
+                                            track.lyrics_id = result.response[i].lyrics_id;
+                                        }
+                                        tracks.push(track);
+                                    }
+
+                                    callback(
+                                        null,
+                                        {
+                                            "success": true,
+                                            "count": count,
+                                            "tracks": tracks
+                                        }
+                                    );
+                                } else {
+                                    callback('Error in response parameter: ' + result.response);
                                 }
-                                tracks.push(track);
+
+                            } else {
+                                callback('Error json-encoding body: ' + body);
                             }
-
-                            callback(
-                                null,
-                                {
-                                    "success": true,
-                                    "count": count,
-                                    "tracks": tracks
-                                }
-                            );
-
                         } else {
                             callback('Error in search tracks request. Server returned status: ' + response.statusCode);
                         }
@@ -137,7 +145,7 @@ Vkontakte.prototype.search = function(params, callback) {
         });
 };
 
-Vkontakte.prototype.getTrackUrl = function(params, callback) {
+Vkontakte.prototype.getTrackUrl = function (params, callback) {
     if (!params.url) {
         callback('Required param is empty');
         return;
