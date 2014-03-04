@@ -12,8 +12,8 @@ module.exports = function(grunt) {
                         reporter: 'spec',
                         timeout: 30000
                     },
-                    src: ['test/prostopleer.js']
-//                    src: ['test/**/*.js']
+                    //src: ['test/prostopleer.js']
+                    src: ['test/**/*.js']
                 }
             }
         }
