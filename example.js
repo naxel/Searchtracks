@@ -52,8 +52,7 @@ searchTracks.search(params, function(error, response) {
 var Vkontakte = require('./vkontakte');
 
 var config = {
-    id: null,
-    secret: ''
+    token: ''
 };
 
 searchTracks = new SearchTracks(new Vkontakte(config));

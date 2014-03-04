@@ -8,8 +8,7 @@ var SearchTracks = require('../index'),
     Vkontakte = require('../vkontakte');
 
 var config = {
-    id: 3420113,
-    secret: process.env.VK_SECRET
+    token: process.env.VK_TOKEN
 };
 
 var searchTracks = new SearchTracks(new Vkontakte(config));
