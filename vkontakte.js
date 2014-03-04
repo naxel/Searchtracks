@@ -126,7 +126,7 @@ Vkontakte.prototype.search = function (params, callback) {
                                         }
                                     );
                                 } else {
-                                    callback('Error in response parameter: ' + result.response);
+                                    callback('Error in response parameter: ' + result.response + '. body: ' + body);
                                 }
 
                             } else {
