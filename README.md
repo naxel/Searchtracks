@@ -5,6 +5,10 @@ Search Tracks
 
 [![Build Status](https://travis-ci.org/naxel/Searchtracks.png?branch=master)](https://travis-ci.org/naxel/Searchtracks)
 
+[![NPM version](https://badge.fury.io/js/searchtracks.png)](http://badge.fury.io/js/searchtracks)
+
+[![Dependency Status](https://gemnasium.com/naxel/Searchtracks.png)](https://gemnasium.com/naxel/Searchtracks)
+
 Example:
 
 ```js
