@@ -6,22 +6,18 @@
 function SearchTracks(strategy) {
 
     this.search = function(params, callback) {
-        if (!params) {
-            throw Error('Required param is empty');
-        }
-        if (!callback) {
-            throw Error('Callback is empty');
-        }
+        if (!params) throw Error('Required param is empty');
+
+        if (!callback) throw Error('Callback is empty');
+
         strategy.search(params, callback);
     };
 
     this.getTrackUrl = function(params, callback) {
-        if (!params) {
-            throw Error('Required param is empty');
-        }
-        if (!callback) {
-            throw Error('Callback is empty');
-        }
+        if (!params) throw Error('Required param is empty');
+
+        if (!callback) throw Error('Callback is empty');
+
         strategy.getTrackUrl(params, callback);
     };
 

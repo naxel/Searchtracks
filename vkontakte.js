@@ -38,44 +38,44 @@ Vkontakte.prototype.search = function (params, callback) {
 
         if (error) return callback(error);
 
-            if (response.statusCode !== 200) return callback(new Error('Error in search tracks request. Server returned status: ' + response.statusCode));
+        if (response.statusCode !== 200) return callback(new Error('Error in search tracks request. Server returned status: ' + response.statusCode));
 
-            var result = JSON.parse(body);
-            if (!result) return callback(new Error('Error json-encoding body: ' + body));
+        var result = JSON.parse(body);
+        if (!result) return callback(new Error('Error json-encoding body: ' + body));
 
-            if (!(result.response && result.response[0])) return callback(new Error('Error in response parameter: ' + result.response + '. body: ' + body));
+        if (!(result.response && result.response[0])) return callback(new Error('Error in response parameter: ' + result.response + '. body: ' + body));
 
-            var count = result.response[0];
-            var tracks = [];
-            var track = {};
-            result.response.shift();
-            var length = result.response.length;
-            for (var i = 0; i < length; i++) {
-                track = {
-                    'id': result.response[i].aid,
-                    'artist': result.response[i].artist,
-                    'track': result.response[i].title,
-                    'length': result.response[i].duration,
-                    'url': result.response[i].url,
-                    'owner_id': result.response[i].owner_id,
-                    'genre': result.response[i].genre,
-                    'source': 'vkontakte'
-                };
+        var count = result.response[0];
+        var tracks = [];
+        var track = {};
+        result.response.shift();
+        var length = result.response.length;
+        for (var i = 0; i < length; i++) {
+            track = {
+                'id': result.response[i].aid,
+                'artist': result.response[i].artist,
+                'track': result.response[i].title,
+                'length': result.response[i].duration,
+                'url': result.response[i].url,
+                'owner_id': result.response[i].owner_id,
+                'genre': result.response[i].genre,
+                'source': 'vkontakte'
+            };
 
-                if (result.response[i].lyrics_id) {
-                    track.lyrics_id = result.response[i].lyrics_id;
-                }
-                tracks.push(track);
+            if (result.response[i].lyrics_id) {
+                track.lyrics_id = result.response[i].lyrics_id;
             }
+            tracks.push(track);
+        }
 
-            callback(
-                null,
-                {
-                    "success": true,
-                    "count": count,
-                    "tracks": tracks
-                }
-            );
+        callback(
+            null,
+            {
+                "success": true,
+                "count": count,
+                "tracks": tracks
+            }
+        );
     });
 };
 
