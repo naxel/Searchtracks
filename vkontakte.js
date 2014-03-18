@@ -36,63 +36,52 @@ Vkontakte.prototype.search = function (params, callback) {
 
     request(options, function (error, response, body) {
 
-        if (!error) {
-            if (response.statusCode === 200) {
-                var result = JSON.parse(body);
-                if (result) {
-                    if (result.response && result.response[0]) {
-                        var count = result.response[0];
-                        var tracks = [];
-                        var track = {};
-                        result.response.shift();
-                        var length = result.response.length;
-                        for (var i = 0; i < length; i++) {
-                            track = {
-                                'id': result.response[i].aid,
-                                'artist': result.response[i].artist,
-                                'track': result.response[i].title,
-                                'length': result.response[i].duration,
-                                'url': result.response[i].url,
-                                'owner_id': result.response[i].owner_id,
-                                'genre': result.response[i].genre,
-                                'source': 'vkontakte'
-                            };
+        if (error) return callback(error);
 
-                            if (result.response[i].lyrics_id) {
-                                track.lyrics_id = result.response[i].lyrics_id;
-                            }
-                            tracks.push(track);
-                        }
+            if (response.statusCode !== 200) return callback(new Error('Error in search tracks request. Server returned status: ' + response.statusCode));
 
-                        callback(
-                            null,
-                            {
-                                "success": true,
-                                "count": count,
-                                "tracks": tracks
-                            }
-                        );
-                    } else {
-                        callback('Error in response parameter: ' + result.response + '. body: ' + body);
-                    }
+            var result = JSON.parse(body);
+            if (!result) return callback(new Error('Error json-encoding body: ' + body));
 
-                } else {
-                    callback('Error json-encoding body: ' + body);
+            if (!(result.response && result.response[0])) return callback(new Error('Error in response parameter: ' + result.response + '. body: ' + body));
+
+            var count = result.response[0];
+            var tracks = [];
+            var track = {};
+            result.response.shift();
+            var length = result.response.length;
+            for (var i = 0; i < length; i++) {
+                track = {
+                    'id': result.response[i].aid,
+                    'artist': result.response[i].artist,
+                    'track': result.response[i].title,
+                    'length': result.response[i].duration,
+                    'url': result.response[i].url,
+                    'owner_id': result.response[i].owner_id,
+                    'genre': result.response[i].genre,
+                    'source': 'vkontakte'
+                };
+
+                if (result.response[i].lyrics_id) {
+                    track.lyrics_id = result.response[i].lyrics_id;
                 }
-            } else {
-                callback('Error in search tracks request. Server returned status: ' + response.statusCode);
+                tracks.push(track);
             }
-        } else {
-            callback(error);
-        }
+
+            callback(
+                null,
+                {
+                    "success": true,
+                    "count": count,
+                    "tracks": tracks
+                }
+            );
     });
 };
 
 Vkontakte.prototype.getTrackUrl = function (params, callback) {
-    if (!params.url) {
-        callback('Required param is empty');
-        return;
-    }
+    if (!params.url) return callback(new Error('Required param is empty'));
+
     callback(null, params.url);
 };
 
