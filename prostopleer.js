@@ -38,10 +38,10 @@ Prostopleer.prototype.tokenRequest = function (callback) {
 
         if (error) return callback(error);
 
-        if (response.statusCode !== 200) return callback('Error in token request. Server returned status: ' + response.statusCode);
+        if (response.statusCode !== 200) return callback(new Error('Error in token request. Server returned status: ' + response.statusCode));
 
         var result = JSON.parse(body);
-        if (!result) return callback('Token parsing error.');
+        if (!result) return callback(new Error('Token parsing error.'));
 
         accessToken = result.access_token;
         tokenExpireTime = (new Date()).getTime() + 3600000;
@@ -83,7 +83,7 @@ Prostopleer.prototype.search = function (params, callback) {
 
                         if (error) return callback(error);
 
-                        if (response.statusCode !== 200) return callback('Error in search tracks request. Server returned status: ' + response.statusCode);
+                        if (response.statusCode !== 200) return callback(new Error('Error in search tracks request. Server returned status: ' + response.statusCode));
 
                         var result = JSON.parse(body);
 
@@ -132,7 +132,7 @@ Prostopleer.prototype.search = function (params, callback) {
 
                         if (error) return callback(error);
 
-                        if (response.statusCode !== 200) return callback('Error in search tracks request. Server returned status: ' + response.statusCode);
+                        if (response.statusCode !== 200) return callback(new Error('Error in search tracks request. Server returned status: ' + response.statusCode));
                             
                         var result = JSON.parse(body);
 
@@ -172,7 +172,7 @@ Prostopleer.prototype.getTrackUrl = function (params, callback) {
         function (error) {
             if (error) return callback(error);
 
-            if (!params.track_id) return callback('Required param is empty');
+            if (!params.track_id) return callback(new Error('Required param is empty'));
 
             var trackId = params.track_id;
             var reason = params.reason || 'listen';
@@ -195,9 +195,9 @@ Prostopleer.prototype.getTrackUrl = function (params, callback) {
                 if (error || response.statusCode !== 200) return callback(error);
 
                 var result = JSON.parse(body);
-                if (!result) return callback('Response parsing error.');
+                if (!result) return callback(new Error('Response parsing error.'));
 
-                if (result.success === false || !result.url) return callback('Response error.');
+                if (result.success === false || !result.url) return callback(new Error('Response error.'));
                 
                 callback(null, result.url);
             });
