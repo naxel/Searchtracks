@@ -36,24 +36,16 @@ Prostopleer.prototype.tokenRequest = function (callback) {
     };
     request(options, function (error, response, body) {
 
-        if (!error) {
-            if (response.statusCode === 200) {
+        if (error) return callback(error);
 
-                var result = JSON.parse(body);
-                if (result) {
-                    accessToken = result.access_token;
-                    tokenExpireTime = (new Date()).getTime() + 3600000;
-                    callback(null);
-                } else {
-                    callback('Token parsing error.');
-                }
+        if (response.statusCode !== 200) return callback(new Error('Error in token request. Server returned status: ' + response.statusCode));
 
-            } else {
-                callback('Error in token request. Server returned status: ' + response.statusCode);
-            }
-        } else {
-            callback(error);
-        }
+        var result = JSON.parse(body);
+        if (!result) return callback(new Error('Token parsing error.'));
+
+        accessToken = result.access_token;
+        tokenExpireTime = (new Date()).getTime() + 3600000;
+        callback(null);
     });
 };
 
@@ -62,7 +54,8 @@ Prostopleer.prototype.search = function (params, callback) {
 
     this.isValidToken(
         function (error) {
-            if (!error) {
+            if (error) return callback(error);
+
                 var options = {
                     method: 'POST',
                     headers: {
@@ -88,41 +81,36 @@ Prostopleer.prototype.search = function (params, callback) {
 
                     request(options, function (error, response, body) {
 
-                        if (!error) {
-                            if (response.statusCode === 200) {
-                                var result = JSON.parse(body);
+                        if (error) return callback(error);
 
-                                var tracks = [];
-                                var track;
+                        if (response.statusCode !== 200) return callback(new Error('Error in search tracks request. Server returned status: ' + response.statusCode));
 
-                                for (var i in result.tracks) {
-                                    track = {
-                                        'id': result.tracks[i].id,
-                                        'artist': result.tracks[i].artist,
-                                        'track': result.tracks[i].track,
-                                        'length': result.tracks[i].lenght,
-                                        'text_id': result.tracks[i].text_id,
-                                        'bitrate': result.tracks[i].bitrate,
-                                        'source': 'prostopleer'
-                                    };
+                        var result = JSON.parse(body);
 
-                                    tracks.push(track);
-                                }
-                                callback(
-                                    null,
-                                    {
-                                        "success": true,
-                                        "count": result.count,
-                                        "tracks": tracks
-                                    }
-                                );
+                        var tracks = [];
+                        var track;
 
-                            } else {
-                                callback('Error in search tracks request. Server returned status: ' + response.statusCode);
-                            }
-                        } else {
-                            callback(error);
+                        for (var i in result.tracks) {
+                            track = {
+                                'id': result.tracks[i].id,
+                                'artist': result.tracks[i].artist,
+                                'track': result.tracks[i].track,
+                                'length': result.tracks[i].lenght,
+                                'text_id': result.tracks[i].text_id,
+                                'bitrate': result.tracks[i].bitrate,
+                                'source': 'prostopleer'
+                            };
+
+                            tracks.push(track);
                         }
+                        callback(
+                            null,
+                            {
+                                "success": true,
+                                "count": result.count,
+                                "tracks": tracks
+                            }
+                        );
                     });
                 } else {
                     /**
@@ -142,47 +130,39 @@ Prostopleer.prototype.search = function (params, callback) {
 
                     request(options, function (error, response, body) {
 
-                        if (!error) {
-                            if (response.statusCode === 200) {
-                                var result = JSON.parse(body);
+                        if (error) return callback(error);
 
-                                var tracks = [];
-                                var track;
-                                for (var i in result.tracks.data) {
-                                    track = {
-                                        'id': result.tracks.data[i].id,
-                                        'artist': result.tracks.data[i].artist,
-                                        'track': result.tracks.data[i].track,
-                                        'length': result.tracks.data[i].lenght,
-                                        'text_id': result.tracks.data[i].text_id,
-                                        'bitrate': result.tracks.data[i].bitrate,
-                                        'source': 'prostopleer'
-                                    };
+                        if (response.statusCode !== 200) return callback(new Error('Error in search tracks request. Server returned status: ' + response.statusCode));
+                            
+                        var result = JSON.parse(body);
 
-                                    tracks.push(track);
-                                }
-                                callback(
-                                    null,
-                                    {
-                                        "success": true,
-                                        "count": result.tracks.count,
-                                        "tracks": tracks
-                                    }
-                                );
+                        var tracks = [];
+                        var track;
+                        for (var i in result.tracks.data) {
+                            track = {
+                                'id': result.tracks.data[i].id,
+                                'artist': result.tracks.data[i].artist,
+                                'track': result.tracks.data[i].track,
+                                'length': result.tracks.data[i].lenght,
+                                'text_id': result.tracks.data[i].text_id,
+                                'bitrate': result.tracks.data[i].bitrate,
+                                'source': 'prostopleer'
+                            };
 
-                            } else {
-                                callback('Error in search tracks request. Server returned status: ' + response.statusCode);
-                            }
-                        } else {
-                            callback(error);
+                            tracks.push(track);
                         }
+                        callback(
+                            null,
+                            {
+                                "success": true,
+                                "count": result.tracks.count,
+                                "tracks": tracks
+                            }
+                        );
                     });
                 }
 
 
-            } else {
-                callback(error);
-            }
         });
 };
 
@@ -190,49 +170,37 @@ Prostopleer.prototype.search = function (params, callback) {
 Prostopleer.prototype.getTrackUrl = function (params, callback) {
     this.isValidToken(
         function (error) {
-            if (!error) {
-                if (!params.track_id) {
-                    callback('Required param is empty');
-                    return;
+            if (error) return callback(error);
+
+            if (!params.track_id) return callback(new Error('Required param is empty'));
+
+            var trackId = params.track_id;
+            var reason = params.reason || 'listen';
+            var options = {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Cache-Control': 'no-cache',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
                 }
-                var trackId = params.track_id;
-                var reason = params.reason || 'listen';
-                var options = {
-                    method: 'POST',
-                    headers: {
-                        'Accept': '*/*',
-                        'Cache-Control': 'no-cache',
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-                    }
-                };
-                options.uri = 'http://api.pleer.com/index.php';
-                options.body = 'access_token=' + encodeURIComponent(accessToken) +
-                    '&method=tracks_get_download_link' +
-                    '&reason=' + encodeURIComponent(reason) +
-                    '&track_id=' + encodeURIComponent(trackId);
+            };
+            options.uri = 'http://api.pleer.com/index.php';
+            options.body = 'access_token=' + encodeURIComponent(accessToken) +
+                '&method=tracks_get_download_link' +
+                '&reason=' + encodeURIComponent(reason) +
+                '&track_id=' + encodeURIComponent(trackId);
 
-                request(options, function (error, response, body) {
+            request(options, function (error, response, body) {
 
-                    if (!error && response.statusCode === 200) {
+                if (error || response.statusCode !== 200) return callback(error);
 
-                        var result = JSON.parse(body);
-                        if (result) {
-                            if (result.success === true && result.url) {
-                                callback(null, result.url);
-                            } else {
-                                callback('Response error.');
-                            }
-                        } else {
-                            callback('Response parsing error.');
-                        }
+                var result = JSON.parse(body);
+                if (!result) return callback(new Error('Response parsing error.'));
 
-                    } else {
-                        callback(error);
-                    }
-                });
-            } else {
-                callback(error);
-            }
+                if (result.success === false || !result.url) return callback(new Error('Response error.'));
+                
+                callback(null, result.url);
+            });
         });
 };
 
